@@ -1,5 +1,8 @@
 const categoryParent = document.getElementById("categoryparent");
 const newsContainer = document.getElementById("news-container");
+const bookMarkContainer = document.getElementById("markContainer");
+const bookCount = document.getElementById("bookMarkCount");
+let bookMarks=[];
 
 const loadFunction=()=>{
     const url = "https://news-api-fs.vercel.app/api/categories";
@@ -33,6 +36,7 @@ const showDisplay = (category) => {
   
     
     if(e.target.localName=="li"){
+        showLoad()
         e.target.classList.add('border-b-4');
         loadNews(e.target.id);
 
@@ -53,6 +57,10 @@ const loadNews=(newsId)=>{
        
 
     })
+    .catch((err)=>{
+        showError(err);
+        
+    })
 
 }
 const showArticles=(articles)=>{
@@ -61,11 +69,16 @@ const showArticles=(articles)=>{
    articles.forEach(element=>{
    
      newsContainer.innerHTML += `
-     <div> 
+     <div class=" border border-gray-200 rounded-xl shadow-sm py-3"> 
       <div>
    <img src="${element.image.srcset[5].url}" alt=""/>
      </div>
-     <h1>${element.title}</h1>
+    
+    <div id="${element.id}" class="text-sm mt-2 mx-3">
+     <h1 class="font-bold ">${element.title}</h1>
+     <p>${element.time}</p>
+     <button class="btn">Bookmarks</button>
+    </div>
     
       </div>
 
@@ -74,5 +87,58 @@ const showArticles=(articles)=>{
    });
 
 };
+newsContainer.addEventListener('click',(e)=>{
+   if(e.target.innerText==='Bookmarks'){
+    const button=e.target;
+    const textTitle=button.parentNode.children[0].innerText;
+     const id=e.target.parentNode.id;
+     bookMarks.push({
+        title:textTitle,
+        id:id
+
+
+     })
+    showBookmarsk(bookMarks);
+    
+     
+      
+   }
+})
+const showBookmarsk=(bookMarks)=>{
+    bookCount.innerText=bookMarks.length;
+    bookMarkContainer.innerHTML="";
+   bookMarks.forEach(book=>{
+      bookMarkContainer.innerHTML += `
+      <div class="border py-2 mb-2"> <h1>${book.title}</h1>
+      <button onclick="handleBookMark('${book.id}')" class="btn-xs btn">Delete</button>
+
+      </div>
+     
+     
+     `;
+   })
+    
+}
+const handleBookMark=(bookMarkId)=>{
+    const filterBookMarks=bookMarks.filter(bookMark=>bookMark.id!==bookMarkId)
+    bookMarks=filterBookMarks;
+    showBookmarsk(bookMarks);
+};
+const showLoad=()=>{
+    newsContainer.innerHTML = `
+     <div class="text-red-500">Loading....</div>
+
+
+    `;
+
+}
+const showError=()=>{
+     newsContainer.innerHTML = `
+     <div class="text-red-500">Something went wrong ....</div>
+
+
+    `;
+}
 
 loadFunction();
+loadNews("main");
