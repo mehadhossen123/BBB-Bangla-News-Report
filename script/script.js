@@ -64,6 +64,10 @@ const loadNews=(newsId)=>{
 
 }
 const showArticles=(articles)=>{
+   if(articles.length===0){
+     emptyMessage();
+     return;
+   }
     newsContainer.innerHTML="";
     
    articles.forEach(element=>{
@@ -135,6 +139,14 @@ const showLoad=()=>{
 const showError=()=>{
      newsContainer.innerHTML = `
      <div class="text-red-500">Something went wrong ....</div>
+
+
+    `;
+}
+const emptyMessage=()=>{
+
+ newsContainer.innerHTML = `
+     <div class="text-red-500">No News found here  ....</div>
 
 
     `;
